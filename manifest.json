@@ -1,0 +1,13 @@
+{
+  "name": "CreatiBox — Precios",
+  "short_name": "CreatiBox",
+  "description": "Catálogo y precios de CreatiBox",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#F3EDE3",
+  "theme_color": "#177E89",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

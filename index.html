@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#177E89">
+<title>CreatiBox — Precios</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lobster+Two:wght@700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --crema:#F3EDE3; --tinta:#1B2432; --teal:#177E89; --teal-osc:#0F5A62;
+  --coral:#E0533D; --amarillo:#F5B82E; --blanco:#FFFFFF;
+  --gris:#8A8577; --linea:#DDD5C6; --ok:#2E7D32; --rojo:#C62828;
+  --radius:16px; --sombra:0 2px 10px rgba(27,36,50,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{font-size:16px}
+body{font-family:'Poppins',sans-serif;background:var(--crema);color:var(--tinta);min-height:100vh;padding-bottom:96px}
+.display{font-family:'Lobster Two',cursive;font-weight:700}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+input,select,textarea{font-family:inherit;font-size:1rem;width:100%;padding:12px 14px;border:1.5px solid var(--linea);border-radius:12px;background:var(--blanco);color:var(--tinta)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--teal)}
+label{display:block;font-size:.82rem;font-weight:600;color:var(--gris);margin:14px 0 6px;text-transform:uppercase;letter-spacing:.04em}
+.oculto{display:none!important}
+
+/* ===== Barra superior ===== */
+.topbar{position:sticky;top:0;z-index:20;background:var(--teal);color:#fff;padding:14px 18px 12px;box-shadow:var(--sombra)}
+.topbar .logo{font-size:1.7rem;letter-spacing:.01em}
+.topbar .sub{font-size:.72rem;opacity:.85;margin-top:-4px}
+.buscador{margin-top:10px;position:relative}
+.buscador input{border:none;border-radius:999px;padding:12px 42px 12px 18px}
+.buscador .lupa{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--gris);font-size:1.1rem}
+
+/* ===== Chips de categorías ===== */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:14px 18px 6px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;padding:8px 16px;border-radius:999px;background:var(--blanco);border:1.5px dashed var(--linea);font-size:.85rem;font-weight:600;color:var(--tinta);transition:all .15s}
+.chip.activo{color:#fff;border-style:solid}
+
+/* ===== Tarjetas (borde costura = firma visual) ===== */
+.lista{padding:10px 18px;display:flex;flex-direction:column;gap:12px}
+.seccion-titulo{font-size:1.25rem;color:var(--tinta);margin:10px 2px 2px;display:flex;align-items:center;gap:8px}
+.seccion-titulo .punto{width:12px;height:12px;border-radius:50%}
+.tarjeta{background:var(--blanco);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--sombra);border:2px dashed transparent;display:flex;justify-content:space-between;align-items:center;gap:10px;cursor:pointer;transition:transform .1s}
+.tarjeta:active{transform:scale(.985)}
+.tarjeta .nombre{font-weight:600;font-size:.98rem}
+.tarjeta .tallas{font-size:.75rem;color:var(--gris);margin-top:2px}
+.tarjeta .precios{text-align:right;flex-shrink:0}
+.tarjeta .normal{font-weight:700;font-size:1.05rem}
+.tarjeta .desde{font-size:.68rem;color:var(--gris);text-transform:uppercase;letter-spacing:.05em}
+.tarjeta .mayoreo{font-size:.75rem;color:var(--teal);font-weight:600;margin-top:2px}
+.vacio{text-align:center;color:var(--gris);padding:40px 20px;font-size:.9rem}
+
+/* ===== Detalle ===== */
+.detalle{padding:18px}
+.volver{display:inline-flex;align-items:center;gap:6px;font-weight:600;color:var(--teal);font-size:.9rem;margin-bottom:12px}
+.hero{background:var(--blanco);border-radius:var(--radius);padding:20px;box-shadow:var(--sombra);border:2px dashed var(--linea)}
+.hero .cat-tag{display:inline-block;font-size:.7rem;font-weight:700;color:#fff;padding:4px 12px;border-radius:999px;text-transform:uppercase;letter-spacing:.05em}
+.hero h1{font-size:1.5rem;margin:10px 0 2px}
+.hero .tallas{font-size:.82rem;color:var(--gris)}
+.precio-grande{display:flex;align-items:baseline;gap:8px;margin-top:14px}
+.precio-grande .monto{font-size:2.2rem;font-weight:700;color:var(--coral)}
+.precio-grande .mxn{font-size:.9rem;color:var(--gris);font-weight:600}
+.fila-mayoreo{display:flex;gap:10px;margin-top:12px}
+.caja-mayoreo{flex:1;background:var(--crema);border-radius:12px;padding:10px 12px;text-align:center}
+.caja-mayoreo .etq{font-size:.68rem;font-weight:700;color:var(--gris);text-transform:uppercase;letter-spacing:.04em}
+.caja-mayoreo .val{font-size:1.15rem;font-weight:700;color:var(--teal-osc);margin-top:2px}
+.caja-mayoreo .aj{font-size:.62rem;color:var(--coral);font-weight:600}
+.nota-caja{margin-top:12px;background:#FFF8E6;border:1.5px dashed var(--amarillo);border-radius:12px;padding:10px 14px;font-size:.8rem;color:#7A5B00}
+.panel{background:var(--blanco);border-radius:var(--radius);padding:18px;box-shadow:var(--sombra);margin-top:14px}
+.panel h2{font-size:1.15rem;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.desglose-fila{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--linea);font-size:.9rem}
+.desglose-fila:last-child{border-bottom:none}
+.desglose-fila.total{font-weight:700;border-top:2px solid var(--tinta);border-bottom:none;margin-top:4px;padding-top:10px}
+.desglose-fila .v{font-weight:600}
+.tag-iva{display:inline-block;font-size:.7rem;font-weight:700;padding:3px 10px;border-radius:999px;background:#E8F1EA;color:var(--ok);margin-top:8px}
+.tag-iva.no{background:#F3F0EA;color:var(--gris)}
+.extra-fila{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px dashed var(--linea);font-size:.9rem}
+.extra-fila:last-child{border-bottom:none}
+.extra-fila .desc{font-size:.72rem;color:var(--gris);margin-top:2px;max-width:230px}
+.botonera{display:flex;flex-direction:column;gap:10px;margin-top:16px}
+.btn{width:100%;padding:15px;border-radius:14px;font-size:1rem;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .1s}
+.btn:active{transform:scale(.98)}
+.btn-wa{background:#25D366;color:#fff}
+.btn-sec{background:var(--blanco);color:var(--tinta);border:2px dashed var(--linea)}
+.btn-teal{background:var(--teal);color:#fff}
+.btn-coral{background:var(--coral);color:#fff}
+.btn-peligro{background:none;color:var(--rojo);font-size:.85rem;padding:10px}
+
+/* ===== Matriz calcomanías ===== */
+.selector-med{display:flex;gap:10px}
+.selector-med>div{flex:1}
+.resultado-calc{margin-top:14px;background:var(--crema);border-radius:12px;padding:16px;text-align:center}
+.resultado-calc .monto{font-size:1.8rem;font-weight:700;color:var(--coral)}
+.resultado-calc .min{font-size:.75rem;color:var(--gris);margin-top:4px}
+
+/* ===== Menú flotante ===== */
+.fab{position:fixed;bottom:22px;right:18px;z-index:30;background:var(--coral);color:#fff;border-radius:999px;padding:16px 22px;font-size:1rem;font-weight:700;box-shadow:0 4px 16px rgba(224,83,61,.4);display:flex;align-items:center;gap:8px}
+.hoja{position:fixed;inset:0;z-index:40;background:rgba(27,36,50,.45);display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity .2s}
+.hoja.abierta{opacity:1;pointer-events:auto}
+.hoja-panel{background:var(--crema);width:100%;border-radius:24px 24px 0 0;padding:22px 18px 34px;transform:translateY(100%);transition:transform .25s}
+.hoja.abierta .hoja-panel{transform:translateY(0)}
+.hoja-panel h3{font-size:1.3rem;margin-bottom:14px}
+.menu-item{display:flex;align-items:center;gap:14px;width:100%;background:var(--blanco);border-radius:14px;padding:16px;margin-bottom:10px;font-size:.95rem;font-weight:600;color:var(--tinta);text-align:left;border:2px dashed transparent}
+.menu-item:active{border-color:var(--linea)}
+.menu-item .ic{font-size:1.3rem}
+
+/* ===== Login ===== */
+.login{position:fixed;inset:0;z-index:100;background:var(--teal);display:flex;align-items:center;justify-content:center;padding:24px}
+.login-caja{background:var(--crema);border-radius:20px;padding:30px 24px;width:100%;max-width:380px;border:3px dashed rgba(255,255,255,.5)}
+.login-caja .logo{font-size:2.4rem;text-align:center;color:var(--teal)}
+.login-caja .sub{text-align:center;font-size:.8rem;color:var(--gris);margin-bottom:10px}
+.login-err{color:var(--rojo);font-size:.8rem;margin-top:10px;text-align:center;min-height:1em}
+
+/* ===== Toast / cargando ===== */
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--tinta);color:#fff;padding:12px 22px;border-radius:999px;font-size:.85rem;font-weight:600;opacity:0;transition:all .25s;z-index:60;pointer-events:none;white-space:nowrap}
+.toast.ver{opacity:1;transform:translateX(-50%) translateY(0)}
+.cargando{position:fixed;inset:0;z-index:90;background:var(--crema);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.aguja{width:44px;height:44px;border:4px dashed var(--teal);border-radius:50%;animation:girar 1.2s linear infinite}
+@keyframes girar{to{transform:rotate(360deg)}}
+.form-doble{display:flex;gap:10px}
+.form-doble>div{flex:1}
+.check-linea{display:flex;align-items:center;gap:10px;margin-top:14px;font-size:.9rem;font-weight:500}
+.check-linea input{width:20px;height:20px;flex-shrink:0}
+@media(min-width:700px){.contenedor{max-width:640px;margin:0 auto}}
+</style>
+</head>
+<body>
+
+<!-- Cargando -->
+<div class="cargando" id="cargando"><div class="aguja"></div><div style="font-size:.85rem;color:var(--gris)">Hilando el catálogo…</div></div>
+
+<!-- Login -->
+<div class="login oculto" id="vLogin">
+  <div class="login-caja">
+    <div class="logo display">CreatiBox</div>
+    <div class="sub">Herramienta de precios</div>
+    <label>Correo</label>
+    <input type="email" id="loginEmail" placeholder="tu@correo.com" autocomplete="username">
+    <label>Contraseña</label>
+    <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password">
+    <div style="margin-top:18px"><button class="btn btn-teal" id="btnLogin">Entrar</button></div>
+    <div class="login-err" id="loginErr"></div>
+  </div>
+</div>
+
+<div class="contenedor">
+
+<!-- Vista: Catálogo -->
+<div id="vCatalogo">
+  <div class="topbar">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div><div class="logo display">CreatiBox</div><div class="sub">Catálogo y precios</div></div>
+      <button id="btnSalir" style="color:#fff;opacity:.8;font-size:.75rem;font-weight:600">Salir</button>
+    </div>
+    <div class="buscador"><input type="search" id="txtBuscar" placeholder="Buscar producto… (ej. sudadera)"><span class="lupa">⌕</span></div>
+  </div>
+  <div class="chips" id="chips"></div>
+  <div class="lista" id="lista"></div>
+</div>
+
+<!-- Vista: Detalle -->
+<div id="vDetalle" class="oculto"><div class="detalle" id="detalleCont"></div></div>
+
+<!-- Vista: Formulario producto -->
+<div id="vFormProd" class="oculto"><div class="detalle" id="formProdCont"></div></div>
+
+<!-- Vista: Materia prima -->
+<div id="vMateria" class="oculto"><div class="detalle" id="materiaCont"></div></div>
+
+<!-- Vista: Ajustes -->
+<div id="vAjustes" class="oculto"><div class="detalle" id="ajustesCont"></div></div>
+
+</div>
+
+<!-- Botón flotante -->
+<button class="fab" id="fab">＋ Menú</button>
+
+<!-- Hoja de menú -->
+<div class="hoja" id="hoja">
+  <div class="hoja-panel">
+    <h3 class="display">¿Qué quieres hacer?</h3>
+    <button class="menu-item" data-accion="nuevoProducto"><span class="ic">📦</span> Agregar producto nuevo</button>
+    <button class="menu-item" data-accion="materia"><span class="ic">🧵</span> Materia prima</button>
+    <button class="menu-item" data-accion="excel"><span class="ic">⬇️</span> Descargar Excel (respaldo)</button>
+    <button class="menu-item" data-accion="ajustes"><span class="ic">⚙️</span> Regla de mayoreo y ajustes</button>
+    <button class="menu-item" data-accion="cerrar" style="background:none;justify-content:center;color:var(--gris)">Cancelar</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, doc, onSnapshot, setDoc, addDoc, deleteDoc, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { firebaseConfig } from "./firebase-config.js";
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+/* ============ CATEGORÍAS (colores de las páginas del catálogo) ============ */
+const CATS = [
+  {id:"multicolor", nombre:"Estampado Multicolor", color:"#E0533D"},
+  {id:"unicolor",   nombre:"Estampado 1 Color",    color:"#1D7A5F"},
+  {id:"deportivas", nombre:"Deportivas",           color:"#2E3A59"},
+  {id:"bordado",    nombre:"Bordado",              color:"#1993A3"},
+  {id:"stickers",   nombre:"Stickers / Etiquetas", color:"#7B4B94"},
+  {id:"calcomanias",nombre:"Calcomanías",          color:"#C69214"},
+  {id:"fiestas",    nombre:"Fiestas",              color:"#C96F4A"},
+  {id:"branding",   nombre:"Branding",             color:"#6E8B5E"},
+];
+const catDe = id => CATS.find(c=>c.id===id) || {nombre:id,color:"#8A8577"};
+
+/* ============ DATOS INICIALES (Tabla Maestra + Catálogo PDF 2026) ============ */
+/* precio = precio competitivo (el que se cobra). desglose = esqueleto interno. */
+const SEED_PRODUCTOS = [
+ // — Estampado Multicolor —
+ {nombre:"Playera Adulto", cat:"multicolor", precio:170, tallas:"CH, M, L, XL", iva:true,
+  desglose:[["Prenda (con IVA)",42.92],["Hoja de estampado",32],["Mano de obra",29],["Indirectos (12%)",8.99]],
+  costoTotal:112.91, margen:40, precioCalc:188.18},
+ {nombre:"Playera Niño", cat:"multicolor", precio:135, tallas:"CH, M, L", iva:true,
+  desglose:[["Prenda (con IVA)",32.48],["Hoja de estampado",32],["Mano de obra",29],["Indirectos (12%)",7.74]],
+  costoTotal:101.22, margen:40, precioCalc:168.70},
+ {nombre:"Polo", cat:"multicolor", precio:230, tallas:"CH, M, L, XL", iva:true,
+  desglose:[["Prenda (con IVA)",92.80],["Hoja de estampado",32],["Mano de obra",29],["Indirectos (12%)",14.98]],
+  costoTotal:168.78, margen:40, precioCalc:281.29},
+ {nombre:"Sudadera", cat:"multicolor", precio:380, tallas:"CH, M, L, XL", iva:true,
+  desglose:[["Prenda (con IVA)",158.92],["Hoja de estampado",32],["Mano de obra",29],["Indirectos (12%)",22.91]],
+  costoTotal:242.83, margen:40, precioCalc:404.72,
+  notas:"Excel marcaba $400 competitivo; catálogo 2026 dice $380."},
+ {nombre:"Tote Bag", cat:"multicolor", precio:120, desde:true, iva:false,
+  desglose:[["Bolsa base",20],["Hoja de estampado",32],["Mano de obra",29],["Indirectos (12%)",6.24]],
+  costoTotal:87.24, margen:40, precioCalc:145.40, notas:"Sin IVA — proveedor distinto."},
+ {nombre:"Costal de Yute", cat:"multicolor", precio:25, desde:true, iva:false, mayoreoExcluido:true,
+  desglose:[["Costal base",9],["Media hoja de estampado",8],["Mano de obra",29],["Indirectos (12%)",2.04]],
+  costoTotal:48.04, margen:10, precioCalc:53.38,
+  notas:"⚠ Revisar: el 'desde $25' del catálogo queda debajo del costo calculado ($48). Excluido de mayoreo."},
+ // — Estampado 1 Color (vinil textil) —
+ {nombre:"Playera Adulto", cat:"unicolor", precio:150, tallas:"CH, M, L, XL", iva:true,
+  desglose:[["Prenda (con IVA)",42.92],["Vinil textil",24.50],["Mano de obra",16.92],["Indirectos (12%)",8.09]],
+  costoTotal:92.43, margen:40, precioCalc:154.05},
+ {nombre:"Playera Niño", cat:"unicolor", precio:120, tallas:"CH, M, L", iva:true,
+  desglose:[["Prenda (con IVA)",32.48],["Vinil textil",24.50],["Mano de obra",16.92],["Indirectos (12%)",6.84]],
+  costoTotal:80.73, margen:40, precioCalc:134.56},
+ {nombre:"Polo", cat:"unicolor", precio:220, tallas:"CH, M, L, XL", iva:true,
+  desglose:[["Prenda (con IVA)",92.80],["Vinil textil",24.50],["Mano de obra",29],["Indirectos (12%)",14.08]],
+  costoTotal:160.38, margen:40, precioCalc:267.29},
+ {nombre:"Sudadera", cat:"unicolor", precio:350, tallas:"CH, M, L, XL", iva:true,
+  desglose:[["Prenda (con IVA)",158.92],["Vinil textil",24.50],["Mano de obra",16.92],["Indirectos (12%)",22.01]],
+  costoTotal:222.35, margen:40, precioCalc:370.58,
+  notas:"Excel marcaba $380 competitivo; catálogo 2026 dice $350."},
+ {nombre:"Tote Bag", cat:"unicolor", precio:100, desde:true, iva:false,
+  desglose:[["Bolsa base",20],["Vinil textil",24.50],["Mano de obra",16.92],["Indirectos (12%)",5.34]],
+  costoTotal:66.76, margen:40, precioCalc:111.26, notas:"Sin IVA — proveedor distinto."},
+ {nombre:"Costal de Yute", cat:"unicolor", precio:20, desde:true, iva:false, mayoreoExcluido:true,
+  desglose:[["Costal base",9],["Vinil textil",12.25],["Mano de obra",16.92],["Indirectos (12%)",2.55]],
+  costoTotal:40.72, margen:10, precioCalc:45.24,
+  notas:"⚠ Revisar: 'desde $20' queda debajo del costo calculado ($41). Excluido de mayoreo."},
+ // — Deportivas —
+ {nombre:"Playera Triatlón", cat:"deportivas", precio:245, tallas:"S, M, L, XL", iva:false,
+  desglose:[["Prenda poliéster",70],["Vinil textil",24.50],["Mano de obra",29],["Indirectos (12%)",11.34]],
+  costoTotal:134.84, margen:40, precioCalc:224.73,
+  notas:"Vinil textil sobre 100% poliéster. Nota previa del Excel: $225 mayoreo adulto."},
+ {nombre:"Playera Dry Tech", cat:"deportivas", precio:235, tallas:"S, M, L, XL, 2XL", iva:false,
+  desglose:[["Prenda poliéster",70],["Vinil textil",24.50],["Mano de obra",29],["Indirectos (12%)",11.34]],
+  costoTotal:134.84, margen:40, precioCalc:224.73,
+  notas:"Costeo basado en deportiva genérica — afinar costo real de la prenda Dry Tech."},
+ // — Bordado (Bordado Personalizado ~20,000 puntadas, 10×10 cm) —
+ {nombre:"Playera Adulto", cat:"bordado", precio:230, tallas:"CH, M, L, XL", iva:true,
+  desglose:[["Prenda (con IVA)",42.92],["Insumos bordado (hilo + estabilizador)",9.86],["Mano de obra",50.37],["Indirectos (12%)",6.33]],
+  costoTotal:109.48, margen:40, precioCalc:182.47},
+ {nombre:"Playera Niño", cat:"bordado", precio:210, tallas:"CH, M, L", iva:true,
+  desglose:[["Prenda (con IVA)",32.48],["Insumos bordado",9.86],["Mano de obra",50.37],["Indirectos (12%)",5.08]],
+  costoTotal:97.79, margen:40, precioCalc:162.98},
+ {nombre:"Polo", cat:"bordado", precio:250, tallas:"CH, M, L, XL", iva:true,
+  desglose:[["Prenda (con IVA)",92.80],["Insumos bordado",9.86],["Mano de obra",50.37],["Indirectos (12%)",12.32]],
+  costoTotal:165.35, margen:40, precioCalc:275.58},
+ {nombre:"Camisa Manga Larga", cat:"bordado", precio:390, tallas:"CH, M, L, XL", iva:true, mayoreoMax:10,
+  desglose:[["Prenda (con IVA)",208.80],["Insumos bordado",9.86],["Mano de obra",50.37],["Indirectos (12%)",26.24]],
+  costoTotal:295.27, margen:25, precioCalc:393.69, notas:"Margen 25% — mayoreo limitado a -10%."},
+ {nombre:"Camisa Manga Corta", cat:"bordado", precio:360, tallas:"CH, M, L, XL", iva:true, mayoreoMax:10,
+  desglose:[["Prenda (con IVA)",183.28],["Insumos bordado",9.86],["Mano de obra",50.37],["Indirectos (12%)",23.18]],
+  costoTotal:266.68, margen:25, precioCalc:355.58, notas:"Margen 25% — mayoreo limitado a -10%."},
+ {nombre:"Sudadera", cat:"bordado", precio:400, tallas:"CH, M, L, XL", iva:true,
+  desglose:[["Prenda (con IVA)",158.92],["Insumos bordado",9.86],["Mano de obra",50.37],["Indirectos (12%)",20.25]],
+  costoTotal:239.40, margen:40, precioCalc:399.00},
+ {nombre:"Tote Bag", cat:"bordado", precio:140, iva:false,
+  desglose:[["Bolsa base",20],["Insumos bordado",9.86],["Mano de obra",50.37],["Indirectos (12%)",3.58]],
+  costoTotal:83.81, margen:40, precioCalc:139.68, notas:"Sin IVA — proveedor distinto."},
+ {nombre:"Bordado de nombre en uniformes", cat:"bordado", precio:50, desde:true, iva:false, mayoreoExcluido:true, unidad:"pieza",
+  notas:"El cliente proporciona la prenda. Solo nombre/texto pequeño."},
+ // — Stickers / Etiquetas adhesivas (precio por plantilla, mínimo 2) —
+ {nombre:"Papel Fotográfico — Troquelado", cat:"stickers", precio:55, unidad:"plantilla", iva:false, mayoreoExcluido:true,
+  notas:"Precio por plantilla completa (~6 pzas de 8×8 cm). Compra mínima: 2 plantillas."},
+ {nombre:"Vinil Imprimible — Troquelado", cat:"stickers", precio:65, unidad:"plantilla", iva:false, mayoreoExcluido:true,
+  notas:"Compra mínima: 2 plantillas."},
+ {nombre:"Vinil Imprimible — Semitroquelado", cat:"stickers", precio:60, unidad:"plantilla", iva:false, mayoreoExcluido:true,
+  notas:"Compra mínima: 2 plantillas."},
+ {nombre:"Vinil Holográfico — Troquelado", cat:"stickers", precio:75, unidad:"plantilla", iva:false, mayoreoExcluido:true,
+  notas:"Compra mínima: 2 plantillas."},
+ {nombre:"Vinil Holográfico — Semitroquelado", cat:"stickers", precio:70, unidad:"plantilla", iva:false, mayoreoExcluido:true,
+  notas:"Compra mínima: 2 plantillas."},
+ // — Calcomanías (producto especial con matriz) —
+ {nombre:"Calcomanías de vinil (solo corte)", cat:"calcomanias", tipo:"matriz", iva:false, mayoreoExcluido:true,
+  notas:"Compra mínima: $50. Cotizar medidas personalizadas por WhatsApp."},
+ // — Fiestas —
+ {nombre:"Cake Topper", cat:"fiestas", precio:150, desde:true, iva:false, notas:"Costeo pendiente — precio de mercado."},
+ {nombre:"Dulceros", cat:"fiestas", precio:50, desde:true, iva:false, notas:"Costeo pendiente."},
+ {nombre:"Tatuajes temporales", cat:"fiestas", precio:150, desde:true, iva:false, notas:"Costeo pendiente."},
+ {nombre:"Invitaciones", cat:"fiestas", precio:null, iva:false, notas:"Se cotiza según diseño."},
+ {nombre:"Impresión en papel fotográfico", cat:"fiestas", precio:35, desde:true, iva:false, notas:"Costeo pendiente."},
+ // — Branding —
+ {nombre:"Imanes", cat:"branding", precio:30, desde:true, iva:false, notas:"Costeo pendiente."},
+ {nombre:"Libretas con vinil", cat:"branding", precio:25, desde:true, iva:false,
+  desglose:[["Costo total (libreta + vinil)",14.50]], costoTotal:14.50, margen:40, precioCalc:24.17},
+ {nombre:"Llavero acrílico", cat:"branding", precio:30, desde:true, iva:false,
+  notas:"Excel marcaba $50; catálogo 2026 dice desde $30. Costeo pendiente."},
+ {nombre:"Separador de libros", cat:"branding", precio:35, desde:true, iva:false, notas:"Costeo pendiente."},
+];
+
+const MATRIZ_CALCO = {
+  medidas:[5,10,15,20,25,30],
+  precios:[[12,18,25,35,40,45],[18,26,40,50,55,60],[25,40,45,58,72,82],[35,50,58,72,100,110],[40,55,72,100,115,125],[45,60,82,110,125,130]]
+};
+
+const SEED_MATERIA = [
+ ["Hoja para estampado",16,"1 hoja por prenda",16,"Costo completo por pieza estampada"],
+ ["Costal de yute (base)",9,"1 pieza",9,"Sin IVA — proveedor distinto"],
+ ["Tote bag (base)",20,"1 pieza",20,"Sin IVA — proveedor distinto"],
+ ["Libreta (base)",28,"1 pieza",28,""],
+ ["Vinil de impresión (libretas)",4.66,"1 pieza / diseño",4.66,""],
+ ["Laminado holográfico",4,"1 pieza",4,""],
+ ["Vinil impresión (stickers)",5,"1 hoja",5,"Usa impresora + tinta"],
+ ["Vinil adhesivo de color (rollo 10m×30cm)",196,"3 m²",65.33,"$65.33/m²"],
+ ["Papel fotográfico 230g",1.85,"1 hoja",1.85,""],
+ ["Papel fotográfico adhesivo 200g",2.25,"1 hoja",2.25,""],
+ ["Acrílico circular",3.84,"1 pieza",3.84,""],
+ ["Vinil transparente adhesivo",3.71,"1 hoja",3.71,""],
+ ["Vinil holográfico adhesivo",3.71,"1 hoja",3.71,""],
+ ["Llavero (base)",0.83,"1 pieza",0.83,""],
+ ["Fotográfico adhesivo 90g",2.31,"1 hoja",2.31,""],
+ ["Hilo de color bordado (40 spools × 500m)",580,"20,000 m",14.50,"$0.029/m — por spool"],
+ ["Hilo de bobina Size L (60 pzas × 110m)",530,"6,600 m",8.83,"$0.0803/m — por pieza"],
+ ["Estabilizador bordado (25cm × 46m)",572,"46 m lineales",12.43,"$12.43/m lineal"],
+ ["Playera Niño (base sin IVA)",28,"1 pieza",28,"Con IVA 16%: $32.48"],
+ ["Playera Prime Adulto (base sin IVA)",37,"1 pieza",37,"Con IVA 16%: $42.92"],
+ ["Polo (base sin IVA)",80,"1 pieza",80,"Con IVA 16%: $92.80"],
+ ["Camisa Manga Corta (base sin IVA)",158,"1 pieza",158,"Con IVA 16%: $183.28"],
+ ["Camisa Manga Larga (base sin IVA)",180,"1 pieza",180,"Con IVA 16%: $208.80"],
+ ["Sudadera (base sin IVA)",137,"1 pieza",137,"Con IVA 16%: $158.92"],
+ ["Vinil Textil (rollo 2m)",98,"0.5m por prenda",24.50,"$49/m"],
+ ["Papel Transfer para vinil",179,"10m × 30cm",17.90,"Aprox. por metro"],
+ ["Playera Deportiva 100% Poliéster",70,"1 pieza",70,""],
+];
+
+const SEED_CONFIG = {
+  mayoreo:[{min:10,pct:10},{min:20,pct:15}],
+  ponchado:180, extraBordado:50, laminado:15,
+  msjWhats:"¡Hola! 😊 Gracias por tu interés en CreatiBox. Te comparto la información:"
+};
+
+/* ============ ESTADO ============ */
+let productos = [], materia = [], config = SEED_CONFIG;
+let catActiva = "todas", busqueda = "";
+const $ = id => document.getElementById(id);
+const fmt = n => "$" + Math.round(n).toLocaleString("es-MX");
+const fmt2 = n => "$" + n.toLocaleString("es-MX",{minimumFractionDigits:2,maximumFractionDigits:2});
+
+function toast(msg){ const t=$("toast"); t.textContent=msg; t.classList.add("ver"); setTimeout(()=>t.classList.remove("ver"),2400); }
+function verVista(id){ ["vCatalogo","vDetalle","vFormProd","vMateria","vAjustes"].forEach(v=>$(v).classList.toggle("oculto",v!==id)); window.scrollTo(0,0); $("fab").style.display = id==="vCatalogo" ? "flex":"none"; }
+
+/* ============ MAYOREO ============ */
+function calcMayoreo(p){
+  if(p.mayoreoExcluido || p.precio==null) return null;
+  const tiers = (config.mayoreo||[]).slice().sort((a,b)=>a.min-b.min);
+  return tiers.map(t=>{
+    let pct = t.pct;
+    if(p.mayoreoMax && pct > p.mayoreoMax) pct = p.mayoreoMax;
+    let precio = Math.round(p.precio*(1-pct/100));
+    let ajustado = false;
+    if(p.costoTotal && precio < Math.ceil(p.costoTotal)){ precio = Math.ceil(p.costoTotal); ajustado = true; }
+    if(precio >= p.precio) return {...t, precio:null};
+    return {min:t.min, pct, precio, ajustado};
+  }).filter(t=>t.precio!=null);
+}
+
+/* ============ CATÁLOGO ============ */
+function renderChips(){
+  const cont = $("chips"); cont.innerHTML = "";
+  const todos = [{id:"todas",nombre:"Todos",color:"var(--tinta)"},...CATS];
+  todos.forEach(c=>{
+    const b = document.createElement("button");
+    b.className = "chip"+(catActiva===c.id?" activo":"");
+    b.textContent = c.nombre;
+    if(catActiva===c.id){ b.style.background=c.color; b.style.borderColor=c.color; }
+    b.onclick = ()=>{ catActiva=c.id; renderChips(); renderLista(); };
+    cont.appendChild(b);
+  });
+}
+function renderLista(){
+  const cont = $("lista"); cont.innerHTML = "";
+  const q = busqueda.trim().toLowerCase();
+  let visibles = productos.filter(p=>
+    (catActiva==="todas"||p.cat===catActiva) &&
+    (!q || p.nombre.toLowerCase().includes(q) || catDe(p.cat).nombre.toLowerCase().includes(q)));
+  if(!visibles.length){ cont.innerHTML = `<div class="vacio">No encontré nada con esa búsqueda.<br>Prueba con otra palabra 🧵</div>`; return; }
+  const grupos = {};
+  visibles.forEach(p=>{ (grupos[p.cat]=grupos[p.cat]||[]).push(p); });
+  CATS.forEach(c=>{
+    if(!grupos[c.id]) return;
+    const h = document.createElement("div");
+    h.className = "seccion-titulo display";
+    h.innerHTML = `<span class="punto" style="background:${c.color}"></span>${c.nombre}`;
+    cont.appendChild(h);
+    grupos[c.id].forEach(p=>{
+      const t = document.createElement("div");
+      t.className = "tarjeta"; t.style.borderColor = c.color+"55";
+      const may = calcMayoreo(p);
+      const precioTxt = p.tipo==="matriz" ? `${fmt(12)}–${fmt(130)}` : p.precio==null ? "Cotizar" : fmt(p.precio);
+      t.innerHTML = `<div><div class="nombre">${p.nombre}</div>${p.tallas?`<div class="tallas">${p.tallas}</div>`:""}</div>
+        <div class="precios">${p.desde?`<div class="desde">desde</div>`:""}<div class="normal">${precioTxt}</div>
+        ${may&&may.length?`<div class="mayoreo">${may[0].min}+ pzs: ${fmt(may[0].precio)}</div>`:""}</div>`;
+      t.onclick = ()=>renderDetalle(p.id);
+      cont.appendChild(t);
+    });
+  });
+}
+
+/* ============ DETALLE ============ */
+function renderDetalle(id){
+  const p = productos.find(x=>x.id===id); if(!p) return;
+  const c = catDe(p.cat);
+  const may = calcMayoreo(p);
+  let html = `<button class="volver" id="btnVolver">← Catálogo</button>
+  <div class="hero">
+    <span class="cat-tag" style="background:${c.color}">${c.nombre}</span>
+    <h1 class="display">${p.nombre}</h1>
+    ${p.tallas?`<div class="tallas">Tallas: ${p.tallas}</div>`:""}`;
+  if(p.tipo==="matriz"){
+    html += `</div><div class="panel"><h2 class="display">🎯 Calcula el precio</h2>
+      <div class="selector-med">
+        <div><label>Ancho</label><select id="selAncho">${MATRIZ_CALCO.medidas.map(m=>`<option value="${m}">${m} cm</option>`).join("")}</select></div>
+        <div><label>Alto</label><select id="selAlto">${MATRIZ_CALCO.medidas.map(m=>`<option value="${m}">${m} cm</option>`).join("")}</select></div>
+      </div>
+      <div class="resultado-calc"><div class="monto" id="calcoPrecio">$12</div><div class="min">Compra mínima: $50 · Medidas personalizadas se cotizan</div></div></div>`;
+  } else {
+    html += `<div class="precio-grande">${p.desde?`<span class="mxn">desde</span>`:""}<span class="monto">${p.precio==null?"Cotizar":fmt(p.precio)}</span>${p.precio!=null?`<span class="mxn">MXN</span>`:""}</div>`;
+    if(may&&may.length){
+      html += `<div class="fila-mayoreo">${may.map(t=>`<div class="caja-mayoreo"><div class="etq">${t.min}+ piezas (−${t.pct}%)</div><div class="val">${fmt(t.precio)}</div>${t.ajustado?`<div class="aj">ajustado al costo</div>`:""}</div>`).join("")}</div>`;
+    } else if(p.mayoreoExcluido){
+      html += `<div class="nota-caja">Este producto no entra en la regla de mayoreo — se cotiza aparte.</div>`;
+    }
+    html += `</div>`;
+  }
+  if(p.notas) html += `<div class="nota-caja">📌 ${p.notas}</div>`;
+  if(p.desglose && p.desglose.length){
+    html += `<div class="panel"><h2 class="display">🧵 ¿Cómo se arma?</h2>`;
+    p.desglose.forEach(d=>{ html += `<div class="desglose-fila"><span>${d[0]}</span><span class="v">${fmt2(d[1])}</span></div>`; });
+    if(p.costoTotal) html += `<div class="desglose-fila total"><span>Costo total</span><span class="v">${fmt2(p.costoTotal)}</span></div>`;
+    if(p.margen!=null) html += `<div class="desglose-fila"><span>Margen objetivo</span><span class="v">${p.margen}%</span></div>`;
+    if(p.precioCalc) html += `<div class="desglose-fila"><span>Precio calculado (referencia)</span><span class="v">${fmt2(p.precioCalc)}</span></div>`;
+    html += `<span class="tag-iva ${p.iva?"":"no"}">${p.iva?"IVA 16% incluido en la prenda":"Sin IVA (proveedor distinto)"}</span></div>`;
+  }
+  if(p.cat==="bordado"){
+    html += `<div class="panel"><h2 class="display">➕ Cargos extra</h2>
+      <div class="extra-fila"><div><div>Ponchado <b>${fmt(config.ponchado)}</b> · único por diseño</div><div class="desc">Aplica típicamente en pedidos grandes con el mismo diseño (empresas, restaurantes). Criterio propio para clientes independientes.</div></div></div>
+      <div class="extra-fila"><div><div>Bordado extra <b>+${fmt(config.extraBordado)}</b></div><div class="desc">Si el diseño excede los 10×10 cm, se cobra otro bordado.</div></div></div></div>`;
+  }
+  if(p.cat==="stickers"){
+    html += `<div class="panel"><h2 class="display">➕ Cargos extra</h2>
+      <div class="extra-fila"><div><div>Laminado protector <b>+${fmt(config.laminado)}</b></div><div class="desc">Holográfico, transparente o mate — sobre la plantilla.</div></div></div></div>`;
+  }
+  html += `<div class="botonera">
+    <button class="btn btn-wa" id="btnWa">📲 Compartir por WhatsApp</button>
+    <button class="btn btn-sec" id="btnEditar">✏️ Editar producto</button>
+    <button class="btn-peligro" id="btnBorrar">Eliminar producto</button>
+  </div>`;
+  $("detalleCont").innerHTML = html;
+  verVista("vDetalle");
+  $("btnVolver").onclick = ()=>verVista("vCatalogo");
+  $("btnEditar").onclick = ()=>renderFormProd(p.id);
+  $("btnBorrar").onclick = async ()=>{ if(confirm(`¿Eliminar "${p.nombre}"? Esta acción no se puede deshacer.`)){ await deleteDoc(doc(db,"productos",p.id)); toast("Producto eliminado"); verVista("vCatalogo"); } };
+  if(p.tipo==="matriz"){
+    const upd = ()=>{ const a=MATRIZ_CALCO.medidas.indexOf(+$("selAncho").value), b=MATRIZ_CALCO.medidas.indexOf(+$("selAlto").value); $("calcoPrecio").textContent = fmt(MATRIZ_CALCO.precios[b][a]); };
+    $("selAncho").onchange = upd; $("selAlto").onchange = upd;
+  }
+  $("btnWa").onclick = ()=>{
+    let lineas = [config.msjWhats||"", ""];
+    if(p.tipo==="matriz"){
+      lineas.push(`*${p.nombre}*`, `Precio según medida: de ${fmt(12)} a ${fmt(130)}`, `(ej. 10×10 cm: ${fmt(26)})`, "Compra mínima: $50");
+    } else {
+      lineas.push(`*${p.nombre}*${p.tallas?` (${p.tallas})`:""}`);
+      lineas.push(p.precio==null ? "Se cotiza según diseño 🎨" : `Precio: ${p.desde?"desde ":""}*${fmt(p.precio)} MXN*`);
+      if(may&&may.length) may.forEach(t=>lineas.push(`Mayoreo ${t.min}+ piezas: *${fmt(t.precio)}* c/u`));
+    }
+    lineas.push("", "¿Te gustaría cotizar tu diseño? ¡Cuéntanos tu idea! ✨");
+    window.open("https://wa.me/?text="+encodeURIComponent(lineas.join("\n")),"_blank");
+  };
+}
+
+/* ============ FORMULARIO PRODUCTO ============ */
+function renderFormProd(id){
+  const p = id ? productos.find(x=>x.id===id) : null;
+  const html = `<button class="volver" id="btnVolverF">← Cancelar</button>
+  <div class="panel"><h2 class="display">${p?"✏️ Editar producto":"📦 Producto nuevo"}</h2>
+    <label>Nombre</label><input id="fNombre" value="${p?p.nombre.replace(/"/g,"&quot;"):""}" placeholder="Ej. Gorra bordada">
+    <label>Categoría</label><select id="fCat">${CATS.map(c=>`<option value="${c.id}" ${p&&p.cat===c.id?"selected":""}>${c.nombre}</option>`).join("")}</select>
+    <div class="form-doble">
+      <div><label>Precio de venta ($)</label><input id="fPrecio" type="number" step="0.01" value="${p&&p.precio!=null?p.precio:""}" placeholder="0"></div>
+      <div><label>Tallas (opcional)</label><input id="fTallas" value="${p&&p.tallas?p.tallas:""}" placeholder="CH, M, L, XL"></div>
+    </div>
+    <div class="check-linea"><input type="checkbox" id="fDesde" ${p&&p.desde?"checked":""}><span>Es precio "desde" (varía según diseño)</span></div>
+    <div class="check-linea"><input type="checkbox" id="fIva" ${p&&p.iva?"checked":""}><span>La prenda paga IVA 16% (proveedor de tela)</span></div>
+    <div class="check-linea"><input type="checkbox" id="fExcl" ${p&&p.mayoreoExcluido?"checked":""}><span>Excluir de la regla de mayoreo</span></div>
+    <div class="form-doble">
+      <div><label>Costo total ($, opcional)</label><input id="fCosto" type="number" step="0.01" value="${p&&p.costoTotal?p.costoTotal:""}" placeholder="Para el candado de mayoreo"></div>
+      <div><label>Margen % (opcional)</label><input id="fMargen" type="number" value="${p&&p.margen!=null?p.margen:""}" placeholder="40"></div>
+    </div>
+    <label>Notas (opcional)</label><textarea id="fNotas" rows="2" placeholder="Recordatorios internos">${p&&p.notas?p.notas:""}</textarea>
+    <div class="botonera"><button class="btn btn-coral" id="btnGuardarProd">Guardar</button></div>
+  </div>`;
+  $("formProdCont").innerHTML = html;
+  verVista("vFormProd");
+  $("btnVolverF").onclick = ()=> p ? renderDetalle(p.id) : verVista("vCatalogo");
+  $("btnGuardarProd").onclick = async ()=>{
+    const nombre = $("fNombre").value.trim();
+    if(!nombre){ toast("Ponle un nombre al producto"); return; }
+    const datos = {
+      nombre, cat:$("fCat").value,
+      precio: $("fPrecio").value===""?null:parseFloat($("fPrecio").value),
+      tallas: $("fTallas").value.trim()||null,
+      desde: $("fDesde").checked, iva: $("fIva").checked,
+      mayoreoExcluido: $("fExcl").checked,
+      costoTotal: $("fCosto").value===""?null:parseFloat($("fCosto").value),
+      margen: $("fMargen").value===""?null:parseFloat($("fMargen").value),
+      notas: $("fNotas").value.trim()||null,
+    };
+    if(p){ const nuevo = {...p, ...datos}; delete nuevo.id; await setDoc(doc(db,"productos",p.id), nuevo, {merge:true}); toast("Cambios guardados"); renderDetalle(p.id); }
+    else { await addDoc(collection(db,"productos"),datos); toast("Producto agregado ✨"); verVista("vCatalogo"); }
+  };
+}
+
+/* ============ MATERIA PRIMA ============ */
+function renderMateria(editId){
+  const e = editId ? materia.find(m=>m.id===editId) : null;
+  let html = `<button class="volver" id="btnVolverM">← Catálogo</button>
+  <div class="panel"><h2 class="display">🧵 ${e?"Editar insumo":"Agregar materia prima"}</h2>
+    <label>Nombre del material</label><input id="mNombre" value="${e?e.nombre.replace(/"/g,"&quot;"):""}" placeholder="Ej. Vinil dorado metálico">
+    <div class="form-doble">
+      <div><label>Costo del paquete ($)</label><input id="mCosto" type="number" step="0.01" value="${e?e.costoPaquete:""}"></div>
+      <div><label>Costo unitario ($)</label><input id="mUnit" type="number" step="0.01" value="${e?e.costoUnitario:""}"></div>
+    </div>
+    <label>Rendimiento</label><input id="mRend" value="${e?e.rendimiento:""}" placeholder="Ej. 1 hoja por prenda">
+    <label>Notas</label><input id="mNotas" value="${e&&e.notas?e.notas:""}" placeholder="Opcional">
+    <div class="botonera"><button class="btn btn-teal" id="btnGuardarMat">${e?"Guardar cambios":"Agregar insumo"}</button>
+    ${e?`<button class="btn-peligro" id="btnBorrarMat">Eliminar insumo</button>`:""}</div>
+  </div>
+  <div class="panel"><h2 class="display">Catálogo de insumos (${materia.length})</h2>`;
+  materia.slice().sort((a,b)=>a.nombre.localeCompare(b.nombre)).forEach(m=>{
+    html += `<div class="extra-fila" style="cursor:pointer" data-mid="${m.id}"><div><div>${m.nombre}</div><div class="desc">${m.rendimiento||""}${m.notas?" · "+m.notas:""}</div></div><b>${fmt2(m.costoUnitario)}</b></div>`;
+  });
+  html += `</div>`;
+  $("materiaCont").innerHTML = html;
+  verVista("vMateria");
+  $("btnVolverM").onclick = ()=>verVista("vCatalogo");
+  document.querySelectorAll("[data-mid]").forEach(el=> el.onclick = ()=>renderMateria(el.dataset.mid));
+  $("btnGuardarMat").onclick = async ()=>{
+    const nombre = $("mNombre").value.trim();
+    if(!nombre){ toast("Ponle nombre al material"); return; }
+    const datos = { nombre, costoPaquete:parseFloat($("mCosto").value)||0, costoUnitario:parseFloat($("mUnit").value)||0, rendimiento:$("mRend").value.trim()||null, notas:$("mNotas").value.trim()||null };
+    if(e){ await setDoc(doc(db,"materiaPrima",e.id),datos,{merge:true}); toast("Insumo actualizado"); }
+    else { await addDoc(collection(db,"materiaPrima"),datos); toast("Insumo agregado 🧵"); }
+    renderMateria();
+  };
+  if(e) $("btnBorrarMat").onclick = async ()=>{ if(confirm(`¿Eliminar "${e.nombre}"?`)){ await deleteDoc(doc(db,"materiaPrima",e.id)); toast("Insumo eliminado"); renderMateria(); } };
+}
+
+/* ============ AJUSTES ============ */
+function renderAjustes(){
+  const m = config.mayoreo||[];
+  $("ajustesCont").innerHTML = `<button class="volver" id="btnVolverA">← Catálogo</button>
+  <div class="panel"><h2 class="display">⚙️ Regla de mayoreo</h2>
+    <div class="form-doble">
+      <div><label>Escalón 1: desde (pzs)</label><input id="a1min" type="number" value="${m[0]?m[0].min:10}"></div>
+      <div><label>Descuento %</label><input id="a1pct" type="number" value="${m[0]?m[0].pct:10}"></div>
+    </div>
+    <div class="form-doble">
+      <div><label>Escalón 2: desde (pzs)</label><input id="a2min" type="number" value="${m[1]?m[1].min:20}"></div>
+      <div><label>Descuento %</label><input id="a2pct" type="number" value="${m[1]?m[1].pct:15}"></div>
+    </div>
+    <div class="nota-caja" style="margin-top:14px">🔒 Candado automático: el precio de mayoreo nunca baja del costo del producto. El Costal de Yute está excluido y las Camisas se limitan a −10%.</div>
+    <h2 class="display" style="margin-top:20px">Cargos y mensaje</h2>
+    <div class="form-doble">
+      <div><label>Ponchado ($)</label><input id="aPonchado" type="number" value="${config.ponchado}"></div>
+      <div><label>Bordado extra ($)</label><input id="aExtra" type="number" value="${config.extraBordado}"></div>
+    </div>
+    <label>Laminado stickers ($)</label><input id="aLam" type="number" value="${config.laminado}">
+    <label>Saludo del mensaje de WhatsApp</label><textarea id="aMsj" rows="2">${config.msjWhats||""}</textarea>
+    <div class="botonera"><button class="btn btn-teal" id="btnGuardarCfg">Guardar ajustes</button></div>
+  </div>`;
+  verVista("vAjustes");
+  $("btnVolverA").onclick = ()=>verVista("vCatalogo");
+  $("btnGuardarCfg").onclick = async ()=>{
+    const nueva = { mayoreo:[{min:+$("a1min").value,pct:+$("a1pct").value},{min:+$("a2min").value,pct:+$("a2pct").value}],
+      ponchado:+$("aPonchado").value, extraBordado:+$("aExtra").value, laminado:+$("aLam").value, msjWhats:$("aMsj").value.trim() };
+    await setDoc(doc(db,"config","general"),nueva);
+    toast("Ajustes guardados ⚙️"); verVista("vCatalogo");
+  };
+}
+
+/* ============ EXPORTAR EXCEL ============ */
+function exportarExcel(){
+  const wb = XLSX.utils.book_new();
+  const filasP = [["Producto","Categoría","Precio venta","Es 'desde'","Tallas","IVA prenda","Costo total","Margen %","Precio calculado","Mayoreo "+(config.mayoreo[0]?.min||10)+"+","Mayoreo "+(config.mayoreo[1]?.min||20)+"+","Notas"]];
+  productos.forEach(p=>{
+    const may = calcMayoreo(p)||[];
+    filasP.push([p.nombre, catDe(p.cat).nombre, p.precio??"Cotizar", p.desde?"Sí":"", p.tallas||"", p.iva?"Sí":"No", p.costoTotal??"", p.margen??"", p.precioCalc??"", may[0]?.precio??(p.mayoreoExcluido?"Excluido":""), may[1]?.precio??"", p.notas||""]);
+  });
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(filasP), "Productos");
+  const filasM = [["Material","Costo paquete","Rendimiento","Costo unitario","Notas"]];
+  materia.forEach(m=>filasM.push([m.nombre,m.costoPaquete,m.rendimiento||"",m.costoUnitario,m.notas||""]));
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(filasM), "Materia Prima");
+  const filasC = [["Configuración","Valor"],["Mayoreo escalón 1",`${config.mayoreo[0].min}+ pzs = -${config.mayoreo[0].pct}%`],["Mayoreo escalón 2",`${config.mayoreo[1].min}+ pzs = -${config.mayoreo[1].pct}%`],["Ponchado",config.ponchado],["Bordado extra >10x10",config.extraBordado],["Laminado stickers",config.laminado]];
+  const filasCal = [["Calcomanías (cm)",...MATRIZ_CALCO.medidas.map(m=>m+"cm")]];
+  MATRIZ_CALCO.medidas.forEach((m,i)=>filasCal.push([m+"cm",...MATRIZ_CALCO.precios[i]]));
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(filasC), "Config");
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(filasCal), "Calcomanías");
+  const fecha = new Date().toISOString().slice(0,10);
+  XLSX.writeFile(wb, `CreatiBox_Respaldo_${fecha}.xlsx`);
+  toast("Excel descargado 📄");
+}
+
+/* ============ SEED (primera vez) ============ */
+async function sembrarSiVacio(){
+  const snap = await getDocs(collection(db,"productos"));
+  if(!snap.empty) return;
+  if(!confirm("El catálogo está vacío. ¿Cargar el catálogo inicial de CreatiBox (Tabla Maestra 2026)?")) return;
+  const batch = writeBatch(db);
+  SEED_PRODUCTOS.forEach(p=>batch.set(doc(collection(db,"productos")),p));
+  SEED_MATERIA.forEach(m=>batch.set(doc(collection(db,"materiaPrima")),{nombre:m[0],costoPaquete:m[1],rendimiento:m[2],costoUnitario:m[3],notas:m[4]||null}));
+  batch.set(doc(db,"config","general"),SEED_CONFIG);
+  await batch.commit();
+  toast("Catálogo inicial cargado ✨");
+}
+
+/* ============ ARRANQUE Y SINCRONIZACIÓN ============ */
+let subs = [];
+function escuchar(){
+  subs.forEach(u=>u()); subs = [];
+  subs.push(onSnapshot(collection(db,"productos"), s=>{
+    productos = s.docs.map(d=>({id:d.id,...d.data()}));
+    const orden = {};
+    SEED_PRODUCTOS.forEach((p,i)=>orden[p.cat+"|"+p.nombre]=i);
+    productos.sort((a,b)=>(orden[a.cat+"|"+a.nombre]??999)-(orden[b.cat+"|"+b.nombre]??999)||a.nombre.localeCompare(b.nombre));
+    if(!$("vCatalogo").classList.contains("oculto")) renderLista();
+  }));
+  subs.push(onSnapshot(collection(db,"materiaPrima"), s=>{ materia = s.docs.map(d=>({id:d.id,...d.data()})); }));
+  subs.push(onSnapshot(doc(db,"config","general"), s=>{ if(s.exists()) config = s.data(); if(!$("vCatalogo").classList.contains("oculto")) renderLista(); }));
+}
+
+onAuthStateChanged(auth, async user=>{
+  $("cargando").classList.add("oculto");
+  if(user){
+    $("vLogin").classList.add("oculto");
+    escuchar();
+    await sembrarSiVacio();
+    renderChips(); renderLista(); verVista("vCatalogo");
+  } else {
+    $("vLogin").classList.remove("oculto");
+  }
+});
+
+$("btnLogin").onclick = async ()=>{
+  $("loginErr").textContent = "";
+  try { await signInWithEmailAndPassword(auth, $("loginEmail").value.trim(), $("loginPass").value); }
+  catch(e){ $("loginErr").textContent = "Correo o contraseña incorrectos. Intenta de nuevo."; }
+};
+$("loginPass").addEventListener("keydown", e=>{ if(e.key==="Enter") $("btnLogin").click(); });
+$("btnSalir").onclick = ()=>{ if(confirm("¿Cerrar sesión?")) signOut(auth); };
+$("txtBuscar").addEventListener("input", e=>{ busqueda = e.target.value; renderLista(); });
+$("fab").onclick = ()=>$("hoja").classList.add("abierta");
+$("hoja").addEventListener("click", e=>{ if(e.target===$("hoja")) $("hoja").classList.remove("abierta"); });
+document.querySelectorAll(".menu-item").forEach(b=>b.onclick = ()=>{
+  $("hoja").classList.remove("abierta");
+  const a = b.dataset.accion;
+  if(a==="nuevoProducto") renderFormProd(null);
+  else if(a==="materia") renderMateria();
+  else if(a==="excel") exportarExcel();
+  else if(a==="ajustes") renderAjustes();
+});
+</script>
+</body>
+</html>
