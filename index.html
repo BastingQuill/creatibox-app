@@ -639,15 +639,20 @@ function exportarExcel(){
 
 /* ============ SEED (primera vez) ============ */
 async function sembrarSiVacio(){
-  const snap = await getDocs(collection(db,"productos"));
-  if(!snap.empty) return;
-  if(!confirm("El catálogo está vacío. ¿Cargar el catálogo inicial de CreatiBox (Tabla Maestra 2026)?")) return;
-  const batch = writeBatch(db);
-  SEED_PRODUCTOS.forEach(p=>batch.set(doc(collection(db,"productos")),p));
-  SEED_MATERIA.forEach(m=>batch.set(doc(collection(db,"materiaPrima")),{nombre:m[0],costoPaquete:m[1],rendimiento:m[2],costoUnitario:m[3],notas:m[4]||null}));
-  batch.set(doc(db,"config","general"),SEED_CONFIG);
-  await batch.commit();
-  toast("Catálogo inicial cargado ✨");
+  try {
+    const snap = await getDocs(collection(db,"productos"));
+    if(!snap.empty) return;
+    if(!confirm("El catálogo está vacío. ¿Cargar el catálogo inicial de CreatiBox (Tabla Maestra 2026)?")) return;
+    const batch = writeBatch(db);
+    SEED_PRODUCTOS.forEach(p=>batch.set(doc(collection(db,"productos")),p));
+    SEED_MATERIA.forEach(m=>batch.set(doc(collection(db,"materiaPrima")),{nombre:m[0],costoPaquete:m[1],rendimiento:m[2],costoUnitario:m[3],notas:m[4]||null}));
+    batch.set(doc(db,"config","general"),SEED_CONFIG);
+    await batch.commit();
+    toast("Catálogo inicial cargado ✨");
+  } catch(e){
+    alert("No pude cargar el catálogo.\n\nCódigo: " + (e.code||"desconocido") + "\nDetalle: " + e.message + "\n\nMándale esta pantalla a Claude para arreglarlo.");
+    console.error("SEED ERROR", e);
+  }
 }
 
 /* ============ ARRANQUE Y SINCRONIZACIÓN ============ */
@@ -660,8 +665,8 @@ function escuchar(){
     SEED_PRODUCTOS.forEach((p,i)=>orden[p.cat+"|"+p.nombre]=i);
     productos.sort((a,b)=>(orden[a.cat+"|"+a.nombre]??999)-(orden[b.cat+"|"+b.nombre]??999)||a.nombre.localeCompare(b.nombre));
     if(!$("vCatalogo").classList.contains("oculto")) renderLista();
-  }));
-  subs.push(onSnapshot(collection(db,"materiaPrima"), s=>{ materia = s.docs.map(d=>({id:d.id,...d.data()})); }));
+  }, e=>{ console.error("productos listener",e); toast("Error leyendo catálogo: "+(e.code||e.message)); }));
+  subs.push(onSnapshot(collection(db,"materiaPrima"), s=>{ materia = s.docs.map(d=>({id:d.id,...d.data()})); }, e=>console.error("materia listener",e)));
   subs.push(onSnapshot(doc(db,"config","general"), s=>{ if(s.exists()) config = s.data(); if(!$("vCatalogo").classList.contains("oculto")) renderLista(); }));
 }
 
@@ -687,6 +692,7 @@ $("btnSalir").onclick = ()=>{ if(confirm("¿Cerrar sesión?")) signOut(auth); };
 $("txtBuscar").addEventListener("input", e=>{ busqueda = e.target.value; renderLista(); });
 $("fab").onclick = ()=>$("hoja").classList.add("abierta");
 $("hoja").addEventListener("click", e=>{ if(e.target===$("hoja")) $("hoja").classList.remove("abierta"); });
+window.addEventListener("unhandledrejection", e=>{ console.error("PROMESA",e.reason); toast("Error: "+(e.reason&&(e.reason.code||e.reason.message)||"desconocido")); });
 document.querySelectorAll(".menu-item").forEach(b=>b.onclick = ()=>{
   $("hoja").classList.remove("abierta");
   const a = b.dataset.accion;
